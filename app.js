@@ -128,32 +128,92 @@
       const d = a[i] - b[i];
       total += d * d;
     }
-    return total;
+    return total / Math.max(n, 1);
   }
 
-  function weightedSample(items, count) {
-    const source = items.slice();
-    const selected = [];
-    while (selected.length < count && source.length) {
-      const weights = source.map((_, i) => Math.exp(-i / 4.2));
-      let pick = Math.random() * weights.reduce((a, b) => a + b, 0);
-      let index = 0;
-      for (; index < weights.length; index++) {
-        pick -= weights[index];
-        if (pick <= 0) break;
-      }
-      selected.push(source.splice(Math.min(index, source.length - 1), 1)[0]);
+  function geographicDistance(a, b) {
+    const toRad = degrees => degrees * Math.PI / 180;
+    const lat1 = toRad(a.lat);
+    const lat2 = toRad(b.lat);
+    const dLat = lat2 - lat1;
+    const dLon = toRad(b.lon - a.lon);
+    const h = Math.sin(dLat / 2) ** 2
+      + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+    return 6371 * 2 * Math.asin(Math.min(1, Math.sqrt(h)));
+  }
+
+  function areaDifference(a, b) {
+    return Math.abs(Math.log(Math.max(a.area, 0.01) / Math.max(b.area, 0.01)));
+  }
+
+  function weightedPick(ranked, used, temperature) {
+    const available = ranked.filter(item => !used.has(item.country.id));
+    if (!available.length) return null;
+    const limit = Math.min(available.length, Math.max(10, Math.ceil(activePool().length * 0.22)));
+    const shortlist = available.slice(0, limit);
+    const weights = shortlist.map((_, rank) => {
+      const jitter = 0.72 + Math.random() * 0.56;
+      return Math.exp(-rank / temperature) * jitter;
+    });
+    let cursor = Math.random() * weights.reduce((sum, value) => sum + value, 0);
+    for (let i = 0; i < shortlist.length; i++) {
+      cursor -= weights[i];
+      if (cursor <= 0) return shortlist[i].country;
     }
-    return selected;
+    return shortlist[shortlist.length - 1].country;
   }
 
   function optionsFor(correct) {
-    const candidates = activePool()
-      .filter(c => c.id !== correct.id)
-      .map(c => ({ country: c, distance: squaredDistance(correct.v, c.v) }))
-      .sort((a, b) => a.distance - b.distance)
-      .slice(0, Math.min(18, activePool().length - 1));
-    const distractors = weightedSample(candidates, 3).map(item => item.country);
+    const pool = activePool().filter(country => country.id !== correct.id);
+    const metrics = pool.map(country => ({
+      country,
+      geo: geographicDistance(correct, country),
+      area: areaDifference(correct, country),
+      shape: squaredDistance(correct.v, country.v)
+    }));
+
+    const rankings = {
+      geo: metrics.slice().sort((a, b) => a.geo - b.geo),
+      area: metrics.slice().sort((a, b) => a.area - b.area),
+      shape: metrics.slice().sort((a, b) => a.shape - b.shape)
+    };
+
+    const geoRank = new Map(rankings.geo.map((item, rank) => [item.country.id, rank]));
+    const areaRank = new Map(rankings.area.map((item, rank) => [item.country.id, rank]));
+    const shapeRank = new Map(rankings.shape.map((item, rank) => [item.country.id, rank]));
+    const blendWeights = {
+      geo: 0.32 + Math.random() * 0.22,
+      area: 0.32 + Math.random() * 0.22,
+      shape: 0.1 + Math.random() * 0.16
+    };
+    rankings.blend = metrics.map(item => ({
+      ...item,
+      blend: geoRank.get(item.country.id) * blendWeights.geo
+        + areaRank.get(item.country.id) * blendWeights.area
+        + shapeRank.get(item.country.id) * blendWeights.shape
+        + Math.random() * 2.5
+    })).sort((a, b) => a.blend - b.blend);
+
+    // Every question includes a geographically plausible option and a similarly
+    // sized option. The third strategy and all picks are randomized each time.
+    const third = Math.random() < 0.5 ? 'shape' : 'blend';
+    const strategies = shuffle(['geo', 'area', third]);
+    const used = new Set([correct.id]);
+    const distractors = [];
+    strategies.forEach(strategy => {
+      const pick = weightedPick(rankings[strategy], used, 4.2 + Math.random() * 3.6);
+      if (pick) {
+        used.add(pick.id);
+        distractors.push(pick);
+      }
+    });
+
+    while (distractors.length < 3) {
+      const fallback = weightedPick(rankings.blend, used, 8);
+      if (!fallback) break;
+      used.add(fallback.id);
+      distractors.push(fallback);
+    }
     return shuffle([correct, ...distractors]);
   }
 

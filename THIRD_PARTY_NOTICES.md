@@ -20,7 +20,7 @@ Selected small-country corrections use country polygon data pages on Wikimedia C
 
 ## GSHHG / basemap-data
 
-Small-island outlines and selected microstate boundary samples are derived from GSHHG 2.3.6 data distributed through `basemap-data 2.0.0`.
+Small-island outlines and selected microstate boundary samples are derived from GSHHG 2.3.6 data distributed through `basemap-data-hires 2.0.0`.
 
 - GSHHG: https://www.soest.hawaii.edu/pwessel/gshhg/
 - Basemap: https://github.com/matplotlib/basemap

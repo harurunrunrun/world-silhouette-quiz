@@ -11,6 +11,13 @@ Most country outlines are derived from Natural Earth administrative boundary dat
 
 Natural Earth states that its raster and vector map data are in the public domain and may be used in any type of project.
 
+## Wikimedia Commons country polygon data
+
+Selected small-country corrections use country polygon data pages on Wikimedia Commons. The pages identify the data as part of the Country Polygons as GeoJSON dataset and release the data under CC0 / the Open Data Commons Public Domain Dedication and License.
+
+- Dataset: https://datahub.io/core/geo-countries
+- License/status: CC0 / PDDL public-domain dedication
+
 ## GSHHG / basemap-data
 
 Small-island outlines and selected microstate boundary samples are derived from GSHHG 2.3.6 data distributed through `basemap-data 2.0.0`.
@@ -25,4 +32,4 @@ Copies of the relevant GPL and LGPL license texts are included in the `LICENSES`
 
 ## Boundary and recognition disclaimer
 
-The quiz uses generalized boundaries for educational display. Inclusion in the expanded mode does not express a position on sovereignty, diplomatic recognition, or territorial disputes. Several small or widely dispersed island states are shown using principal islands or a readability-oriented arrangement.
+The quiz uses generalized boundaries for educational display. Inclusion in the expanded mode does not express a position on sovereignty, diplomatic recognition, or territorial disputes. Widely dispersed island states retain their island arrangement, but very small components may be enlarged locally so that they remain visible in the quiz.

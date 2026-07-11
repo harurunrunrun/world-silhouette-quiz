@@ -11,6 +11,7 @@ A 10-question, four-choice country silhouette quiz that runs entirely in a web b
 - Keyboard controls: press `1`–`4` to answer and `Enter` to continue
 - Responsive layout for phones and desktop browsers
 - Fully offline operation
+- Higher-detail silhouettes for small countries and island states
 
 ## Usage
 
@@ -37,4 +38,4 @@ The complete scope is stated in `LICENSE`. Keep `data/countries.js`, `LICENSE`, 
 
 ## Disclaimer
 
-The boundary and recognition labels do not express a political position. For readability, some island states are shown using only their principal islands or a simplified arrangement.
+The boundary and recognition labels do not express a political position. For readability, tiny components of widely dispersed island states may be enlarged locally while retaining their relative arrangement.

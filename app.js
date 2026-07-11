@@ -12,7 +12,7 @@
     ['South America', 'South America'],
     ['Oceania', 'Oceania']
   ];
-  const QUESTION_COUNT = 10;
+  const QUICK_QUESTION_COUNT = 10;
 
   const el = {
     setup: document.getElementById('setupView'),
@@ -20,6 +20,7 @@
     result: document.getElementById('resultView'),
     regionGrid: document.getElementById('regionGrid'),
     summary: document.getElementById('selectionSummary'),
+    fullSetCount: document.getElementById('fullSetCount'),
     start: document.getElementById('startButton'),
     questionNumber: document.getElementById('questionNumber'),
     settingLabel: document.getElementById('quizSettingLabel'),
@@ -30,6 +31,7 @@
     feedback: document.getElementById('feedback'),
     next: document.getElementById('nextButton'),
     finalScore: document.getElementById('finalScore'),
+    finalTotal: document.getElementById('finalTotal'),
     resultMessage: document.getElementById('resultMessage'),
     review: document.getElementById('review'),
     retry: document.getElementById('retryButton'),
@@ -38,6 +40,7 @@
 
   const state = {
     coverage: 'standard',
+    lengthMode: 'quick',
     region: 'world',
     questions: [],
     index: 0,
@@ -71,13 +74,26 @@
     return state.coverage === 'expanded' ? 'Expanded mode' : 'Standard mode';
   }
 
+  function lengthLabel() {
+    return state.lengthMode === 'all' ? 'Full set' : 'Quick quiz';
+  }
+
+  function selectedQuestionCount() {
+    const poolSize = activePool().length;
+    return state.lengthMode === 'all' ? poolSize : Math.min(QUICK_QUESTION_COUNT, poolSize);
+  }
+
   function updateSummary() {
     const pool = activePool();
-    el.summary.innerHTML = `<strong>${coverageLabel()} · ${regionLabel()}</strong><br>10 questions from ${pool.length} ${pool.length === 1 ? 'entry' : 'entries'}`;
+    const count = selectedQuestionCount();
+    const noun = count === 1 ? 'question' : 'questions';
+    el.fullSetCount.textContent = `${pool.length} ${pool.length === 1 ? 'question' : 'questions'}`;
+    el.summary.innerHTML = `<strong>${coverageLabel()} · ${regionLabel()} · ${lengthLabel()}</strong><br>${count} ${noun} from ${pool.length} ${pool.length === 1 ? 'entry' : 'entries'}`;
+    el.start.textContent = `Start ${count}-question quiz`;
     document.querySelectorAll('.region-btn').forEach(button => {
       const region = button.dataset.region;
-      const count = DATA.filter(c => (state.coverage === 'expanded' || c.group === 'standard') && (region === 'world' || c.region === region)).length;
-      button.querySelector('small').textContent = `${count} ${count === 1 ? 'entry' : 'entries'}`;
+      const regionCount = DATA.filter(c => (state.coverage === 'expanded' || c.group === 'standard') && (region === 'world' || c.region === region)).length;
+      button.querySelector('small').textContent = `${regionCount} ${regionCount === 1 ? 'entry' : 'entries'}`;
     });
   }
 
@@ -104,21 +120,28 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function makeQuestionSet() {
-    const pool = activePool();
+  function makeQuickQuestionSet(pool) {
+    const target = Math.min(QUICK_QUESTION_COUNT, pool.length);
     const extras = shuffle(pool.filter(c => c.group === 'expanded'));
     const standard = shuffle(pool.filter(c => c.group === 'standard'));
     let selected = [];
 
     if (state.coverage === 'expanded' && extras.length) {
-      const guaranteed = state.region === 'world' ? Math.min(2, extras.length) : 1;
+      const guaranteed = state.region === 'world' ? Math.min(2, extras.length, target) : 1;
       selected = extras.slice(0, guaranteed);
     }
-    selected = selected.concat(standard.slice(0, QUESTION_COUNT - selected.length));
-    if (selected.length < QUESTION_COUNT) {
-      selected = selected.concat(extras.slice(selected.filter(c => c.group === 'expanded').length, QUESTION_COUNT - selected.length));
+    selected = selected.concat(standard.slice(0, target - selected.length));
+    if (selected.length < target) {
+      const usedExtras = selected.filter(c => c.group === 'expanded').length;
+      selected = selected.concat(extras.slice(usedExtras, usedExtras + target - selected.length));
     }
-    return shuffle(selected).slice(0, QUESTION_COUNT);
+    return shuffle(selected).slice(0, target);
+  }
+
+  function makeQuestionSet() {
+    const pool = activePool();
+    if (state.lengthMode === 'all') return shuffle(pool);
+    return makeQuickQuestionSet(pool);
   }
 
   function squaredDistance(a, b) {
@@ -146,10 +169,10 @@
     return Math.abs(Math.log(Math.max(a.area, 0.01) / Math.max(b.area, 0.01)));
   }
 
-  function weightedPick(ranked, used, temperature) {
+  function weightedPick(ranked, used, temperature, poolSize) {
     const available = ranked.filter(item => !used.has(item.country.id));
     if (!available.length) return null;
-    const limit = Math.min(available.length, Math.max(10, Math.ceil(activePool().length * 0.22)));
+    const limit = Math.min(available.length, Math.max(10, Math.ceil(poolSize * 0.22)));
     const shortlist = available.slice(0, limit);
     const weights = shortlist.map((_, rank) => {
       const jitter = 0.72 + Math.random() * 0.56;
@@ -194,14 +217,12 @@
         + Math.random() * 2.5
     })).sort((a, b) => a.blend - b.blend);
 
-    // Every question includes a geographically plausible option and a similarly
-    // sized option. The third strategy and all picks are randomized each time.
     const third = Math.random() < 0.5 ? 'shape' : 'blend';
     const strategies = shuffle(['geo', 'area', third]);
     const used = new Set([correct.id]);
     const distractors = [];
     strategies.forEach(strategy => {
-      const pick = weightedPick(rankings[strategy], used, 4.2 + Math.random() * 3.6);
+      const pick = weightedPick(rankings[strategy], used, 4.2 + Math.random() * 3.6, pool.length);
       if (pick) {
         used.add(pick.id);
         distractors.push(pick);
@@ -209,7 +230,7 @@
     });
 
     while (distractors.length < 3) {
-      const fallback = weightedPick(rankings.blend, used, 8);
+      const fallback = weightedPick(rankings.blend, used, 8, pool.length);
       if (!fallback) break;
       used.add(fallback.id);
       distractors.push(fallback);
@@ -223,22 +244,23 @@
     state.score = 0;
     state.history = [];
     state.locked = false;
-    el.settingLabel.textContent = `${coverageLabel()} / ${regionLabel()}`;
+    el.settingLabel.textContent = `${coverageLabel()} / ${regionLabel()} / ${lengthLabel()}`;
     show(el.quiz);
     renderQuestion();
   }
 
   function renderQuestion() {
     const correct = state.questions[state.index];
+    const total = state.questions.length;
     state.locked = false;
-    el.questionNumber.textContent = `${state.index + 1} / ${QUESTION_COUNT}`;
+    el.questionNumber.textContent = `${state.index + 1} / ${total}`;
     el.score.textContent = String(state.score);
-    el.progress.style.width = `${(state.index / QUESTION_COUNT) * 100}%`;
+    el.progress.style.width = `${(state.index / total) * 100}%`;
     el.shape.setAttribute('d', correct.path);
     el.feedback.textContent = '';
     el.feedback.className = 'feedback';
     el.next.classList.remove('is-visible');
-    el.next.textContent = state.index === QUESTION_COUNT - 1 ? 'View results' : 'Next question';
+    el.next.textContent = state.index === total - 1 ? 'View results' : 'Next question';
     el.answers.replaceChildren();
 
     optionsFor(correct).forEach((country, i) => {
@@ -276,13 +298,13 @@
     el.next.classList.add('is-visible');
     state.history.push({ correct, selected, isCorrect });
     el.score.textContent = String(state.score);
-    el.progress.style.width = `${((state.index + 1) / QUESTION_COUNT) * 100}%`;
+    el.progress.style.width = `${((state.index + 1) / state.questions.length) * 100}%`;
     el.next.focus({ preventScroll: true });
   }
 
   function nextQuestion() {
     if (!state.locked) return;
-    if (state.index >= QUESTION_COUNT - 1) {
+    if (state.index >= state.questions.length - 1) {
       renderResult();
       return;
     }
@@ -290,21 +312,24 @@
     renderQuestion();
   }
 
-  function resultText(score) {
-    if (score === 10) return 'Perfect score. You identified even the fine details of each outline.';
-    if (score >= 8) return 'Excellent result. You distinguished countries with very similar outlines.';
-    if (score >= 5) return 'You answered more than half correctly. Review the missed silhouettes and try again.';
+  function resultText(score, total) {
+    const ratio = total ? score / total : 0;
+    if (score === total) return 'Perfect score. You identified every outline.';
+    if (ratio >= 0.8) return 'Excellent result. You distinguished countries with very similar outlines.';
+    if (ratio >= 0.5) return 'You answered more than half correctly. Review the missed silhouettes and try again.';
     return 'Compare the outline features carefully and try again.';
   }
 
   function renderResult() {
+    const total = state.questions.length;
     el.finalScore.textContent = String(state.score);
-    el.resultMessage.textContent = `${coverageLabel()} · ${regionLabel()}: ${resultText(state.score)}`;
+    el.finalTotal.textContent = String(total);
+    el.resultMessage.textContent = `${coverageLabel()} · ${regionLabel()} · ${lengthLabel()}: ${resultText(state.score, total)}`;
     const misses = state.history.filter(item => !item.isCorrect);
     if (!misses.length) {
       el.review.innerHTML = '<h3>Review</h3><div class="review-item">No incorrect answers.</div>';
     } else {
-      el.review.innerHTML = `<h3>Review</h3><div class="review-list">${misses.map(item =>
+      el.review.innerHTML = `<h3>Review (${misses.length})</h3><div class="review-list">${misses.map(item =>
         `<div class="review-item">Your answer: ${item.selected.name}<br>Correct answer: <strong>${item.correct.name}</strong> (${item.correct.regionName})</div>`
       ).join('')}</div>`;
     }
@@ -314,6 +339,12 @@
   document.querySelectorAll('input[name="coverage"]').forEach(input => {
     input.addEventListener('change', event => {
       state.coverage = event.target.value;
+      updateSummary();
+    });
+  });
+  document.querySelectorAll('input[name="length"]').forEach(input => {
+    input.addEventListener('change', event => {
+      state.lengthMode = event.target.value;
       updateSummary();
     });
   });

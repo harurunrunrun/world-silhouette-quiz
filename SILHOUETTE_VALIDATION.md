@@ -1,0 +1,125 @@
+# Silhouette validation
+
+The compiled silhouettes were checked for invalid SVG paths, duplicate entries, missing components, extreme bounding-box distortion, and over-simplified outlines.
+
+## Regeneration
+
+- 112 silhouettes were regenerated with administrative masks and intermediate-resolution coastline data.
+- 35 regenerated entries have an area of at least 800,000 km².
+- Iceland was regenerated directly from its complete coastline polygon.
+- Existing hand-rebuilt tiny island and archipelago silhouettes were preserved where they provide better quiz readability.
+
+## Regenerated entries
+
+- Algeria (`DZA`): 57 → 166 vertices; natural-earth-mask+gshhg-coast
+- Angola (`AGO`): 70 → 307 vertices; natural-earth-mask+gshhg-coast
+- Cameroon (`CMR`): 59 → 384 vertices; natural-earth-mask+gshhg-coast
+- Chad (`TCD`): 56 → 56 vertices; natural-earth-mask+gshhg-coast
+- Democratic Republic of the Congo (`COD`): 116 → 129 vertices; natural-earth-mask+gshhg-coast
+- Côte d'Ivoire (`CIV`): 45 → 124 vertices; natural-earth-mask+gshhg-coast
+- Djibouti (`DJI`): 14 → 49 vertices; natural-earth-mask+gshhg-coast
+- Egypt (`EGY`): 36 → 351 vertices; natural-earth-mask+gshhg-coast
+- Eritrea (`ERI`): 26 → 151 vertices; natural-earth-mask+gshhg-coast
+- Ethiopia (`ETH`): 57 → 58 vertices; natural-earth-mask+gshhg-coast
+- Gabon (`GAB`): 30 → 320 vertices; natural-earth-mask+gshhg-coast
+- Gambia (`GMB`): 15 → 116 vertices; natural-earth-mask+gshhg-coast
+- Ghana (`GHA`): 23 → 98 vertices; natural-earth-mask+gshhg-coast
+- Guinea (`GIN`): 69 → 373 vertices; natural-earth-mask+gshhg-coast
+- Guinea-Bissau (`GNB`): 18 → 474 vertices; natural-earth-mask+gshhg-coast
+- Kenya (`KEN`): 34 → 130 vertices; natural-earth-mask+gshhg-coast
+- Liberia (`LBR`): 26 → 111 vertices; natural-earth-mask+gshhg-coast
+- Libya (`LBY`): 51 → 110 vertices; natural-earth-mask+gshhg-coast
+- Madagascar (`MDG`): 46 → 1517 vertices; gshhg-direct
+- Mali (`MLI`): 72 → 73 vertices; natural-earth-mask+gshhg-coast
+- Mauritania (`MRT`): 37 → 125 vertices; natural-earth-mask+gshhg-coast
+- Morocco (`MAR`): 60 → 237 vertices; natural-earth-mask+gshhg-coast
+- Mozambique (`MOZ`): 71 → 482 vertices; natural-earth-mask+gshhg-coast
+- Namibia (`NAM`): 42 → 135 vertices; natural-earth-mask+gshhg-coast
+- Niger (`NER`): 57 → 57 vertices; natural-earth-mask+gshhg-coast
+- Nigeria (`NGA`): 55 → 475 vertices; natural-earth-mask+gshhg-coast
+- Senegal (`SEN`): 42 → 241 vertices; natural-earth-mask+gshhg-coast
+- Sierra Leone (`SLE`): 21 → 292 vertices; natural-earth-mask+gshhg-coast
+- Somalia (`SOM`): 32 → 126 vertices; natural-earth-mask+gshhg-coast
+- South Africa (`ZAF`): 88 → 210 vertices; natural-earth-mask+gshhg-coast
+- Sudan (`SDN`): 76 → 125 vertices; natural-earth-mask+gshhg-coast
+- Tanzania (`TZA`): 47 → 152 vertices; natural-earth-mask+gshhg-coast
+- Tunisia (`TUN`): 30 → 166 vertices; natural-earth-mask+gshhg-coast
+- Bangladesh (`BGD`): 35 → 211 vertices; natural-earth-mask+gshhg-coast
+- Cambodia (`KHM`): 16 → 140 vertices; natural-earth-mask+gshhg-coast
+- China (`CHN`): 224 → 1431 vertices; natural-earth-mask+gshhg-coast
+- Georgia (`GEO`): 23 → 64 vertices; natural-earth-mask+gshhg-coast
+- India (`IND`): 130 → 670 vertices; natural-earth-mask+gshhg-coast
+- Indonesia (`IDN`): 226 → 2566 vertices; natural-earth-mask+gshhg-coast
+- Iran (`IRN`): 74 → 460 vertices; natural-earth-mask+gshhg-coast
+- Iraq (`IRQ`): 29 → 55 vertices; natural-earth-mask+gshhg-coast
+- Japan (`JPN`): 61 → 3476 vertices; gshhg-direct
+- Kazakhstan (`KAZ`): 108 → 109 vertices; natural-earth-mask+gshhg-coast
+- Kuwait (`KWT`): 8 → 50 vertices; natural-earth-mask+gshhg-coast
+- Lebanon (`LBN`): 10 → 37 vertices; natural-earth-mask+gshhg-coast
+- Malaysia (`MYS`): 59 → 903 vertices; natural-earth-mask+gshhg-coast
+- Mongolia (`MNG`): 72 → 74 vertices; natural-earth-mask+gshhg-coast
+- Myanmar (Burma) (`MMR`): 68 → 1230 vertices; natural-earth-mask+gshhg-coast
+- North Korea (`PRK`): 45 → 598 vertices; natural-earth-mask+gshhg-coast
+- Oman (`OMN`): 42 → 240 vertices; natural-earth-mask+gshhg-coast
+- Pakistan (`PAK`): 65 → 449 vertices; natural-earth-mask+gshhg-coast
+- Philippines (`PHL`): 100 → 2037 vertices; natural-earth-mask+gshhg-coast
+- Qatar (`QAT`): 8 → 149 vertices; natural-earth-mask+gshhg-coast
+- Saudi Arabia (`SAU`): 74 → 548 vertices; natural-earth-mask+gshhg-coast
+- South Korea (`KOR`): 18 → 1014 vertices; natural-earth-mask+gshhg-coast
+- Thailand (`THA`): 61 → 569 vertices; natural-earth-mask+gshhg-coast
+- Timor-Leste (`TLS`): 10 → 67 vertices; natural-earth-mask+gshhg-coast
+- Türkiye (`TUR`): 64 → 955 vertices; natural-earth-mask+gshhg-coast
+- United Arab Emirates (`ARE`): 21 → 385 vertices; natural-earth-mask+gshhg-coast
+- Vietnam (`VNM`): 41 → 749 vertices; natural-earth-mask+gshhg-coast
+- Yemen (`YEM`): 42 → 236 vertices; natural-earth-mask+gshhg-coast
+- Albania (`ALB`): 21 → 139 vertices; natural-earth-mask+gshhg-coast
+- Bulgaria (`BGR`): 27 → 92 vertices; natural-earth-mask+gshhg-coast
+- Croatia (`HRV`): 41 → 264 vertices; natural-earth-mask+gshhg-coast
+- Denmark (`DNK`): 22 → 493 vertices; natural-earth-mask+gshhg-coast
+- Estonia (`EST`): 16 → 190 vertices; natural-earth-mask+gshhg-coast
+- Finland (`FIN`): 36 → 1105 vertices; natural-earth-mask+gshhg-coast
+- Germany (`DEU`): 57 → 398 vertices; natural-earth-mask+gshhg-coast
+- Greece (`GRC`): 52 → 931 vertices; natural-earth-mask+gshhg-coast
+- Iceland (`ISL`): 18 → 1295 vertices; gshhg-direct
+- Ireland (`IRL`): 12 → 356 vertices; natural-earth-mask+gshhg-coast
+- Italy (`ITA`): 82 → 742 vertices; natural-earth-mask+gshhg-coast
+- Latvia (`LVA`): 21 → 55 vertices; natural-earth-mask+gshhg-coast
+- Lithuania (`LTU`): 18 → 37 vertices; natural-earth-mask+gshhg-coast
+- Montenegro (`MNE`): 17 → 51 vertices; natural-earth-mask+gshhg-coast
+- Netherlands (`NLD`): 13 → 284 vertices; natural-earth-mask+gshhg-coast
+- Poland (`POL`): 43 → 162 vertices; natural-earth-mask+gshhg-coast
+- Portugal (`PRT`): 32 → 251 vertices; natural-earth-mask+gshhg-coast
+- Romania (`ROU`): 43 → 82 vertices; natural-earth-mask+gshhg-coast
+- Russia (`RUS`): 517 → 3051 vertices; natural-earth-mask+gshhg-coast
+- Spain (`ESP`): 50 → 598 vertices; natural-earth-mask+gshhg-coast
+- Sweden (`SWE`): 38 → 1064 vertices; natural-earth-mask+gshhg-coast
+- Ukraine (`UKR`): 92 → 378 vertices; natural-earth-mask+gshhg-coast
+- United Kingdom (`GBR`): 50 → 1690 vertices; natural-earth-mask+gshhg-coast
+- Belize (`BLZ`): 19 → 104 vertices; natural-earth-mask+gshhg-coast
+- Canada (`CAN`): 680 → 8254 vertices; natural-earth-mask+gshhg-coast
+- Costa Rica (`CRI`): 34 → 312 vertices; natural-earth-mask+gshhg-coast
+- Cuba (`CUB`): 40 → 1795 vertices; gshhg-direct
+- Dominican Republic (`DOM`): 25 → 174 vertices; natural-earth-mask+gshhg-coast
+- El Salvador (`SLV`): 19 → 125 vertices; natural-earth-mask+gshhg-coast
+- Haiti (`HTI`): 20 → 240 vertices; natural-earth-mask+gshhg-coast
+- Honduras (`HND`): 56 → 236 vertices; natural-earth-mask+gshhg-coast
+- Mexico (`MEX`): 154 → 1699 vertices; natural-earth-mask+gshhg-coast
+- Nicaragua (`NIC`): 51 → 250 vertices; natural-earth-mask+gshhg-coast
+- Panama (`PAN`): 51 → 758 vertices; natural-earth-mask+gshhg-coast
+- United States (`USA`): 316 → 3126 vertices; natural-earth-mask+gshhg-coast
+- Argentina (`ARG`): 112 → 376 vertices; natural-earth-mask+gshhg-coast
+- Bolivia (`BOL`): 59 → 59 vertices; natural-earth-mask+gshhg-coast
+- Brazil (`BRA`): 192 → 1777 vertices; natural-earth-mask+gshhg-coast
+- Chile (`CHL`): 103 → 3989 vertices; natural-earth-mask+gshhg-coast
+- Colombia (`COL`): 97 → 774 vertices; natural-earth-mask+gshhg-coast
+- Ecuador (`ECU`): 32 → 389 vertices; natural-earth-mask+gshhg-coast
+- Guyana (`GUY`): 38 → 120 vertices; natural-earth-mask+gshhg-coast
+- Peru (`PER`): 73 → 296 vertices; natural-earth-mask+gshhg-coast
+- Suriname (`SUR`): 25 → 60 vertices; natural-earth-mask+gshhg-coast
+- Uruguay (`URY`): 20 → 94 vertices; natural-earth-mask+gshhg-coast
+- Venezuela (`VEN`): 91 → 644 vertices; natural-earth-mask+gshhg-coast
+- Australia (`AUS`): 222 → 3773 vertices; gshhg-direct
+- New Zealand (`NZL`): 60 → 2447 vertices; gshhg-direct
+- Papua New Guinea (`PNG`): 72 → 1464 vertices; natural-earth-mask+gshhg-coast
+- Northern Cyprus (`NCY`): 15 → 56 vertices; natural-earth-mask+gshhg-coast
+- Somaliland (`SOL`): 21 → 59 vertices; natural-earth-mask+gshhg-coast

@@ -140,7 +140,7 @@
     .result-message { margin: 0 0 26px; color: var(--muted); }
     .review { width: min(680px,100%); margin: 0 auto 28px; text-align: left; }
     .review h3 { margin: 0 0 10px; font-size: 1rem; }
-    .review-list { display: grid; gap: 8px; }
+    .review-list { display: grid; gap: 8px; max-height: 520px; overflow: auto; padding-right: 4px; }
     .review-item { padding: 12px 14px; border: 1px solid var(--line); border-radius: 11px; background: #fafbfc; font-size: .9rem; line-height: 1.55; }
     .review-item strong { color: var(--ok); }
     .result-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
@@ -174,7 +174,7 @@
       <div class="brand-mark" aria-hidden="true">WQ</div>
       <div>
         <h1>World Country Silhouette Quiz</h1>
-        <p class="tagline">A 10-question multiple-choice quiz with look-alike silhouettes</p>
+        <p class="tagline">Multiple-choice silhouette quizzes covering 195 or 205 entries</p>
       </div>
     </div>
   </header>
@@ -183,7 +183,7 @@
     <section id="setupView" class="view is-active panel setup" aria-labelledby="setupTitle">
       <p class="eyebrow">QUIZ SETTINGS</p>
       <h2 id="setupTitle">Choose the quiz scope</h2>
-      <p class="lead">Answer 10 questions from a selected region or the entire world.</p>
+      <p class="lead">Choose a 10-question quiz or a full set from one region or the entire world.</p>
 
       <fieldset>
         <legend>Coverage mode</legend>
@@ -200,6 +200,26 @@
             <label for="modeExpanded">
               <span class="mode-title">Expanded mode <span class="mode-count">205 entries</span></span>
               <span class="mode-desc">Adds 10 non-UN-member, partially recognized, or de facto independent entities.</span>
+            </label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Quiz length</legend>
+        <div class="mode-grid">
+          <div class="mode-card">
+            <input type="radio" name="length" id="lengthQuick" value="quick" checked>
+            <label for="lengthQuick">
+              <span class="mode-title">Quick quiz <span class="mode-count">10 questions</span></span>
+              <span class="mode-desc">A randomized selection with no repeated answers within the quiz.</span>
+            </label>
+          </div>
+          <div class="mode-card">
+            <input type="radio" name="length" id="lengthAll" value="all">
+            <label for="lengthAll">
+              <span class="mode-title">Full set <span id="fullSetCount" class="mode-count">195 questions</span></span>
+              <span class="mode-desc">Every available entry in the selected coverage and region, shown once.</span>
             </label>
           </div>
         </div>
@@ -248,7 +268,7 @@
       <p class="eyebrow">RESULT</p>
       <h2 id="resultTitle">Results</h2>
       <div class="result-score" aria-label="Score">
-        <div><strong id="finalScore">0</strong><span>out of 10</span></div>
+        <div><strong id="finalScore">0</strong><span>out of <span id="finalTotal">10</span></span></div>
       </div>
       <p id="resultMessage" class="result-message"></p>
       <div id="review" class="review"></div>

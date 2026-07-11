@@ -1,0 +1,269 @@
+<!-- SPDX-License-Identifier: MIT -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#17243b">
+  <title>World Country Silhouette Quiz</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17243b;
+      --muted: #657188;
+      --paper: #f3f5f8;
+      --card: #ffffff;
+      --line: #d9dee8;
+      --accent: #2458c6;
+      --accent-soft: #e8efff;
+      --ok: #147447;
+      --ok-soft: #e7f5ee;
+      --bad: #b23939;
+      --bad-soft: #fbeaea;
+      --shadow: 0 18px 55px rgba(30, 43, 68, .10);
+      --radius: 20px;
+    }
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: var(--paper); }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(36,88,198,.10), transparent 32rem),
+        radial-gradient(circle at 90% 22%, rgba(48,137,109,.08), transparent 28rem),
+        var(--paper);
+    }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    .shell { width: min(1080px, calc(100% - 32px)); margin: 0 auto; }
+    header { padding: 30px 0 18px; }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand-mark {
+      width: 46px; height: 46px; border-radius: 14px;
+      background: var(--ink); color: #fff; display: grid; place-items: center;
+      font-weight: 800; letter-spacing: .04em; box-shadow: 0 10px 28px rgba(23,36,59,.18);
+    }
+    h1 { margin: 0; font-size: clamp(1.35rem, 3vw, 2rem); line-height: 1.25; letter-spacing: .015em; }
+    .tagline { margin: 5px 0 0; color: var(--muted); font-size: .93rem; }
+    main { padding: 8px 0 42px; }
+    .view { display: none; }
+    .view.is-active { display: block; }
+    .panel {
+      background: rgba(255,255,255,.94); border: 1px solid rgba(217,222,232,.9);
+      border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
+    }
+    .setup { padding: clamp(24px, 5vw, 46px); }
+    .eyebrow { margin: 0 0 8px; font-size: .78rem; letter-spacing: .13em; font-weight: 800; color: var(--accent); }
+    h2 { margin: 0; font-size: clamp(1.45rem, 3.5vw, 2.35rem); line-height: 1.35; }
+    .lead { margin: 12px 0 30px; max-width: 680px; color: var(--muted); line-height: 1.8; }
+    fieldset { border: 0; padding: 0; margin: 0 0 30px; }
+    legend { padding: 0; margin-bottom: 12px; font-weight: 800; }
+    .mode-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+    .mode-card { position: relative; }
+    .mode-card input { position: absolute; opacity: 0; pointer-events: none; }
+    .mode-card label {
+      display: block; height: 100%; padding: 18px; border: 2px solid var(--line); border-radius: 15px;
+      cursor: pointer; transition: border-color .15s, background .15s, transform .15s;
+    }
+    .mode-card label:hover { transform: translateY(-1px); border-color: #aeb9ce; }
+    .mode-card input:focus-visible + label { outline: 3px solid rgba(36,88,198,.24); outline-offset: 2px; }
+    .mode-card input:checked + label { border-color: var(--accent); background: var(--accent-soft); }
+    .mode-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; font-weight: 800; }
+    .mode-count { color: var(--accent); font-size: .86rem; white-space: nowrap; }
+    .mode-desc { display: block; margin-top: 7px; color: var(--muted); font-size: .88rem; line-height: 1.65; }
+    .region-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 9px; }
+    .region-btn {
+      min-height: 48px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px;
+      background: #fff; cursor: pointer; font-weight: 700; transition: .15s;
+    }
+    .region-btn:hover { border-color: #aeb9ce; background: #f9fafc; }
+    .region-btn[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: #194aa8; }
+    .region-btn small { display: block; margin-top: 2px; font-weight: 600; color: var(--muted); }
+    .start-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-top: 4px; }
+    .selection-summary { color: var(--muted); font-size: .92rem; line-height: 1.6; }
+    .primary, .secondary {
+      border-radius: 12px; min-height: 48px; padding: 0 22px; font-weight: 800; cursor: pointer; transition: .15s;
+    }
+    .primary { border: 1px solid var(--accent); color: #fff; background: var(--accent); box-shadow: 0 9px 22px rgba(36,88,198,.22); }
+    .primary:hover { background: #194aa8; transform: translateY(-1px); }
+    .secondary { border: 1px solid var(--line); background: #fff; }
+    .secondary:hover { background: #f7f8fa; }
+    details.scope { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: .84rem; line-height: 1.75; }
+    details.scope summary { cursor: pointer; color: var(--ink); font-weight: 700; }
+
+    .quiz-panel { min-height: 650px; }
+    .quiz-top { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; padding: 18px 24px; border-bottom: 1px solid var(--line); }
+    .quiz-meta { font-size: .86rem; color: var(--muted); }
+    .quiz-meta strong { color: var(--ink); }
+    .score { text-align: right; }
+    .progress-track { height: 5px; background: #e8ebf1; }
+    .progress-bar { height: 100%; width: 0; background: var(--accent); transition: width .25s ease; }
+    .quiz-body { padding: clamp(20px, 4vw, 36px); }
+    .question-label { text-align: center; margin: 0 0 14px; color: var(--muted); font-weight: 700; }
+    .silhouette-wrap {
+      position: relative; width: min(560px, 100%); min-height: 300px; margin: 0 auto 26px;
+      display: grid; place-items: center; border-radius: 20px; overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(217,222,232,.45) 1px, transparent 1px) 0 0 / 36px 36px,
+        linear-gradient(rgba(217,222,232,.45) 1px, transparent 1px) 0 0 / 36px 36px,
+        #f8f9fb;
+      border: 1px solid var(--line);
+    }
+    .silhouette-wrap::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 45px rgba(23,36,59,.035); pointer-events: none; }
+    #silhouette { width: min(440px, 88%); height: auto; max-height: 285px; filter: drop-shadow(0 8px 6px rgba(23,36,59,.16)); }
+    #silhouette path { fill: var(--ink); }
+    .answers { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 11px; width: min(720px,100%); margin: 0 auto; }
+    .answer {
+      display: grid; grid-template-columns: 34px 1fr; align-items: center; text-align: left; gap: 10px;
+      min-height: 60px; padding: 10px 15px; border: 2px solid var(--line); border-radius: 13px;
+      background: #fff; cursor: pointer; font-weight: 750; transition: .14s;
+    }
+    .answer:hover:not(:disabled) { border-color: #aab6cb; transform: translateY(-1px); }
+    .answer:focus-visible { outline: 3px solid rgba(36,88,198,.23); outline-offset: 2px; }
+    .answer:disabled { cursor: default; }
+    .answer-key { width: 28px; height: 28px; border-radius: 8px; background: #eef1f6; display: grid; place-items: center; font-size: .82rem; }
+    .answer.is-correct { border-color: var(--ok); background: var(--ok-soft); color: #0d6039; }
+    .answer.is-wrong { border-color: var(--bad); background: var(--bad-soft); color: #963030; }
+    .feedback-row { min-height: 70px; display: flex; align-items: center; justify-content: space-between; gap: 18px; width: min(720px,100%); margin: 14px auto 0; }
+    .feedback { margin: 0; font-weight: 750; line-height: 1.5; }
+    .feedback.ok { color: var(--ok); }
+    .feedback.bad { color: var(--bad); }
+    #nextButton { visibility: hidden; }
+    #nextButton.is-visible { visibility: visible; }
+
+    .result { padding: clamp(28px, 5vw, 48px); text-align: center; }
+    .result-score { margin: 22px auto; width: 170px; height: 170px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: #fff; box-shadow: 0 18px 45px rgba(23,36,59,.2); }
+    .result-score strong { display: block; font-size: 3.35rem; line-height: 1; }
+    .result-score span { display: block; margin-top: 5px; color: #cbd5e7; }
+    .result-message { margin: 0 0 26px; color: var(--muted); }
+    .review { width: min(680px,100%); margin: 0 auto 28px; text-align: left; }
+    .review h3 { margin: 0 0 10px; font-size: 1rem; }
+    .review-list { display: grid; gap: 8px; }
+    .review-item { padding: 12px 14px; border: 1px solid var(--line); border-radius: 11px; background: #fafbfc; font-size: .9rem; line-height: 1.55; }
+    .review-item strong { color: var(--ok); }
+    .result-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+    footer { padding: 0 0 28px; color: var(--muted); font-size: .78rem; line-height: 1.7; }
+    footer a { color: inherit; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @media (max-width: 760px) {
+      .mode-grid { grid-template-columns: 1fr; }
+      .region-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .start-row { align-items: stretch; flex-direction: column; }
+      .primary { width: 100%; }
+      .quiz-top { grid-template-columns: 1fr auto; }
+      .quiz-top .quiz-meta:nth-child(2) { display: none; }
+      .silhouette-wrap { min-height: 250px; }
+    }
+    @media (max-width: 520px) {
+      .shell { width: min(100% - 20px, 1080px); }
+      header { padding-top: 20px; }
+      .setup, .quiz-body, .result { padding-left: 16px; padding-right: 16px; }
+      .answers { grid-template-columns: 1fr; }
+      .feedback-row { align-items: stretch; flex-direction: column; }
+      #nextButton { width: 100%; }
+      .silhouette-wrap { min-height: 220px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="shell">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">WQ</div>
+      <div>
+        <h1>World Country Silhouette Quiz</h1>
+        <p class="tagline">A 10-question multiple-choice quiz with look-alike silhouettes</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section id="setupView" class="view is-active panel setup" aria-labelledby="setupTitle">
+      <p class="eyebrow">QUIZ SETTINGS</p>
+      <h2 id="setupTitle">Choose the quiz scope</h2>
+      <p class="lead">Answer 10 questions from a selected region or the entire world. Incorrect options are randomized from countries and territories with similar proportions and outline features.</p>
+
+      <fieldset>
+        <legend>Coverage mode</legend>
+        <div class="mode-grid">
+          <div class="mode-card">
+            <input type="radio" name="coverage" id="modeStandard" value="standard" checked>
+            <label for="modeStandard">
+              <span class="mode-title">Standard mode <span class="mode-count">195 countries</span></span>
+              <span class="mode-desc">The 193 UN member states, plus Vatican City and Palestine.</span>
+            </label>
+          </div>
+          <div class="mode-card">
+            <input type="radio" name="coverage" id="modeExpanded" value="expanded">
+            <label for="modeExpanded">
+              <span class="mode-title">Expanded mode <span class="mode-count">205 entries</span></span>
+              <span class="mode-desc">Adds 10 non-UN-member, partially recognized, or de facto independent entities.</span>
+            </label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Region</legend>
+        <div id="regionGrid" class="region-grid" role="group" aria-label="Quiz region"></div>
+      </fieldset>
+
+      <div class="start-row">
+        <div id="selectionSummary" class="selection-summary" aria-live="polite"></div>
+        <button id="startButton" class="primary" type="button">Start quiz</button>
+      </div>
+
+      <details class="scope">
+        <summary>Coverage and map representation</summary>
+        <p>Expanded mode adds Taiwan, Kosovo, Western Sahara, the Cook Islands, Niue, Northern Cyprus, Abkhazia, South Ossetia, Transnistria, and Somaliland. Their inclusion does not express a position on sovereignty or diplomatic recognition.</p>
+        <p>For readability, some island states are shown using only their principal islands or a simplified arrangement. Boundaries are generalized for quiz use.</p>
+      </details>
+    </section>
+
+    <section id="quizView" class="view panel quiz-panel" aria-labelledby="questionHeading">
+      <div class="quiz-top">
+        <div class="quiz-meta"><strong id="questionNumber">1 / 10</strong></div>
+        <div class="quiz-meta" id="quizSettingLabel"></div>
+        <div class="quiz-meta score">Score <strong id="scoreValue">0</strong></div>
+      </div>
+      <div class="progress-track" aria-hidden="true"><div id="progressBar" class="progress-bar"></div></div>
+      <div class="quiz-body">
+        <h2 id="questionHeading" class="question-label">Which country or territory is this?</h2>
+        <div class="silhouette-wrap">
+          <svg id="silhouette" viewBox="0 0 400 280" role="img" aria-label="Country or territory silhouette">
+            <path id="shapePath" fill-rule="evenodd"></path>
+          </svg>
+        </div>
+        <div id="answers" class="answers"></div>
+        <div class="feedback-row">
+          <p id="feedback" class="feedback" aria-live="polite"></p>
+          <button id="nextButton" class="primary" type="button">Next question</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultView" class="view panel result" aria-labelledby="resultTitle">
+      <p class="eyebrow">RESULT</p>
+      <h2 id="resultTitle">Results</h2>
+      <div class="result-score" aria-label="Score">
+        <div><strong id="finalScore">0</strong><span>out of 10</span></div>
+      </div>
+      <p id="resultMessage" class="result-message"></p>
+      <div id="review" class="review"></div>
+      <div class="result-actions">
+        <button id="retryButton" class="primary" type="button">Try again</button>
+        <button id="homeButton" class="secondary" type="button">Change settings</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell">
+    Silhouette source data: Natural Earth (public domain) and GSHHG-derived data. See <code>THIRD_PARTY_NOTICES.md</code> for details.
+  </footer>
+
+  <script src="data/countries.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

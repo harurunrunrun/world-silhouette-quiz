@@ -1,0 +1,22 @@
+LICENSING OVERVIEW
+
+This repository contains components under different licenses. No single
+license applies to the entire repository.
+
+1. Application code
+   Files: index.html, app.js
+   License: MIT License
+   Full text: LICENSES/MIT.txt
+
+2. Compiled silhouette dataset
+   File: data/countries.js
+   License: GNU Lesser General Public License v3.0 or later
+   Full texts: LICENSES/LGPL-3.0.txt and LICENSES/GPL-3.0.txt
+
+3. Natural Earth source material
+   Status: Public domain
+   Details: THIRD_PARTY_NOTICES.md
+
+The LGPL-covered dataset is kept in a separate file from the MIT-covered
+application code. Preserve this file, the license texts, and the notices when
+redistributing the repository.
